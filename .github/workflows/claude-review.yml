@@ -38,3 +38,4 @@ jobs:
 
             Be constructive and specific in your feedback. Give inline comments where applicable.
           allowed_tools: "mcp__github__add_pull_request_review_comment"
+          model: "claude-sonnet-4-20250514"

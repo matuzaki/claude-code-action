@@ -47,3 +47,4 @@ jobs:
             - Documentation
 
             Provide detailed feedback and suggestions for improvement.
+          model: "claude-sonnet-4-20250514"

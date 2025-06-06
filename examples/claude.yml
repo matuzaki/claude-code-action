@@ -42,3 +42,4 @@ jobs:
           claude_expires_at: ${{ secrets.CLAUDE_EXPIRES_AT }}
 
           timeout_minutes: "60"
+          model: "claude-sonnet-4-20250514"
