@@ -1,4 +1,4 @@
-name: "Claude Code Action Official"
+name: "Claude Code Action (OAuth)"
 description: "General-purpose Claude agent for GitHub PRs and issues. Can answer questions and implement code changes."
 branding:
   icon: "at-sign"
@@ -48,7 +48,7 @@ inputs:
 
   # Auth configuration
   anthropic_api_key:
-    description: "Anthropic API key (required for direct API, not needed for Bedrock/Vertex)"
+    description: "Anthropic API key (required for direct API, not needed for Bedrock/Vertex/OAuth)"
     required: false
   github_token:
     description: "GitHub token with repo and pull request permissions (optional if using GitHub App)"
@@ -61,6 +61,22 @@ inputs:
     description: "Use Google Vertex AI with OIDC authentication instead of direct Anthropic API"
     required: false
     default: "false"
+  use_oauth:
+    description: "Use Claude AI OAuth authentication instead of API key (for Claude Max subscribers)"
+    required: false
+    default: "false"
+  claude_access_token:
+    description: "Claude AI OAuth access token (required when use_oauth is true)"
+    required: false
+    default: ""
+  claude_refresh_token:
+    description: "Claude AI OAuth refresh token (required when use_oauth is true)"
+    required: false
+    default: ""
+  claude_expires_at:
+    description: "Claude AI OAuth token expiration timestamp (required when use_oauth is true)"
+    required: false
+    default: ""
 
   max_turns:
     description: "Maximum number of conversation turns"
@@ -110,7 +126,7 @@ runs:
     - name: Run Claude Code
       id: claude-code
       if: steps.prepare.outputs.contains_trigger == 'true'
-      uses: anthropics/claude-code-base-action@f481f924b73a7085d9efea0e50a3ba171ed1d74b # v0.0.20
+      uses: matuzaki/claude-code-base-action@main
       with:
         prompt_file: ${{ runner.temp }}/claude-prompts/claude-prompt.txt
         allowed_tools: ${{ env.ALLOWED_TOOLS }}
@@ -121,8 +137,11 @@ runs:
         mcp_config: ${{ steps.prepare.outputs.mcp_config }}
         use_bedrock: ${{ inputs.use_bedrock }}
         use_vertex: ${{ inputs.use_vertex }}
+        use_oauth: ${{ inputs.use_oauth }}
         anthropic_api_key: ${{ inputs.anthropic_api_key }}
-        claude_env: ${{ inputs.claude_env }}
+        claude_access_token: ${{ inputs.claude_access_token }}
+        claude_refresh_token: ${{ inputs.claude_refresh_token }}
+        claude_expires_at: ${{ inputs.claude_expires_at }}
       env:
         # Model configuration
         ANTHROPIC_MODEL: ${{ inputs.model || inputs.anthropic_model }}
